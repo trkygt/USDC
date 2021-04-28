@@ -1,6 +1,9 @@
-## Writeup Template
+# **Advanced Lane Finding** 
 
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
+#### In this project, lane finding results from the previous project have been improved by additional thresholding and curvature analyses. 
+
+
+![all text][gif0]
 
 ---
 
@@ -17,8 +20,21 @@ The goals / steps of this project are the following:
 * Warp the detected lane boundaries back onto the original image.
 * Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
 
+Below is a figure that represents the overall pipeline which is implemented to complete the goals above. 
+
+![alt text][image0]
+
+Here is a list of scripts that have been implemented for the project. 
+
+* main.py: This scripts uncludes a test case to implement the pipeline process and overall pipeline for all test images and videos. User can uncomment the input source line. 
+* pipeline.py: The source code for the pipeline can be found in this file.
+* line.py: Here, there are two classes (Lane and Line) and all other helper and main functions to process images in lane line search. 
+* plotter.py: This is an extra script for display purposes to save space in the actual script files when plotting figures. 
+
 [//]: # (Image References)
 
+[gif0]: ./gifs/short_project_video.gif "Project Video"
+[image0]: ./gifs/pipeline.png "Pipeline"
 [image1]: ./examples/undistort_output.png "Undistorted"
 [image2]: ./test_images/test1.jpg "Road Transformed"
 [image3]: ./examples/binary_combo_example.jpg "Binary Example"
@@ -27,19 +43,13 @@ The goals / steps of this project are the following:
 [image6]: ./examples/example_output.jpg "Output"
 [video1]: ./project_video.mp4 "Video"
 
-## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
+## Pipeline Details 
 
-### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
+### *Here you can find the detailed explanations for each box shown in the pipeline.*
 
 ---
 
-### Writeup / README
-
-#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  [Here](https://github.com/udacity/CarND-Advanced-Lane-Lines/blob/master/writeup_template.md) is a template writeup for this project you can use as a guide and a starting point.  
-
-You're reading it!
-
-### Camera Calibration
+### (A) Camera Calibration
 
 #### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
 
