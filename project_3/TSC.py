@@ -1,6 +1,13 @@
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.utils import shuffle
+import cv2
+import pandas as pd
+import tensorflow as tf
+# from tensorflow_core.contrib.layers import flatten
+
+print(tf.__version__)
 
 
 # TODO: Fill this in based on where you saved the training and testing data
@@ -46,9 +53,9 @@ n_classes = len(np.unique(y_train))
 ### Data exploration visualization code goes here.
 ### Feel free to use as many code cells as needed.
 
-# import pandas as pd
-# sign_names = pd.read_csv("signnames.csv")
-# signs = sign_names.SignName.values.tolist()
+
+sign_names = pd.read_csv("signnames.csv")
+signs = sign_names.SignName.values.tolist()
 # print(signs[42])
 # c = 0
 # fig, axs = plt.subplots(4, 11, figsize=(24, 9))
@@ -70,19 +77,57 @@ n_classes = len(np.unique(y_train))
 
 
 # Data normalization
-training_data = np.zeros_like(X_train)
-i = 0
-for x in X_train:
-    x = x - np.mean(x)
-    training_data[i] = x
-    i = i + 1
+X_train, y_train = shuffle(X_train, y_train)
 
-testing_data = np.zeros_like(X_test)
-i = 0
-for x in X_test:
-    x = x - np.mean(x)
-    testing_data[i] = x
-    i = i + 1
+
+def preprocess_img(images):
+
+    shape_n = image_shape[0:2] + (1,)
+    new_images = np.empty(shape=(len(images),) + shape_n, dtype=int)
+
+    for i in range(len(images)):
+        normalized_img = cv2.normalize(images[i], np.zeros(image_shape[0:2]), 0, 255, cv2.NORM_MINMAX)
+        grayscaled_img = cv2.cvtColor(normalized_img, cv2.COLOR_RGB2GRAY)
+
+        new_images[i] = np.reshape(grayscaled_img, shape_n)
+
+    return new_images
+
+
+def resample_data(images, img_labels):
+    num = max([len(np.where(images == c_id)[0]) for c_id in sign_names.keys()])
+
+    resampled_images = np.empty(shape=(num * n_classes,) + images.shape[1:], dtype=int)
+    resampled_labels = np.empty(shape=(num * n_classes,), dtype=int)
+    j = 0
+
+    for c_id in sign_names.keys():
+        c_inds = np.where(y_train == c_id)[0]
+        c_inds_len = len(c_inds)
+
+        for i in range(0, num):
+            resampled_images[j] = images[c_inds[i % c_inds_len]]
+            resampled_labels[j] = img_labels[c_inds[i % c_inds_len]]
+            j += 1
+
+    # at this stage data is definitely not randomly shuffled, so shuffle it
+    return shuffle(resampled_images, resampled_labels)
+
+
+X_train_norm = preprocess_img(X_train)
+X_test_norm = preprocess_img(X_test)
+X_valid_norm = preprocess_img(X_valid)
+
+X_train_norm, y_train_norm = resample_data(X_test_norm, y_train)
+y_test_norm = y_test
+y_valid_norm = y_valid
+
+image_shape_norm = X_train_norm[0].shape
+
+
+
+
+
 
 
 
